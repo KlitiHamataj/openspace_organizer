@@ -24,6 +24,31 @@ def main():
         openspace.display()
     else:
         print("\nFailed to organize colleagues. Please add more tables.")
+        
+def test_features():
+    print("TESTING ADD_TABLE AND ADD_COLLEAGUE")
+    
+    # Setup: Create small openspace
+    print("\n1. Creating openspace with 2 tables, 3 seats each...")
+    openspace = Openspace(2, 3)
+    print(f"   Initial tables: {openspace.number_of_tables}")
+    print(f"   Initial capacity: {openspace.total_capacity()}")
+    openspace.display()
+    
+    # Test add_table
+    print("\n2. Testing add_table()...")
+    print("   Adding a table with 4 seats...")
+    openspace.add_table(4)
+    print(f"   Tables after adding: {openspace.number_of_tables}")
+    print(f"   Capacity after adding: {openspace.total_capacity()}")
+    openspace.display()
+    
+    # Organize initial colleagues
+    print("\n3. Organizing initial colleagues...")
+    test_colleagues = ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve']
+    openspace.organize(test_colleagues)
+    print(f"   Organized {len(test_colleagues)} colleagues")
+    openspace.display()
 
 if __name__ == "__main__":
-    main()
+    main()       
