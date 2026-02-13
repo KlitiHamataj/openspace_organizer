@@ -48,3 +48,30 @@ class Openspace:
             print("  (Empty)")
     
         print(f"\nTotal tables: {self.number_of_tables}")
+        
+    # create method add_person(self, name):
+    
+    def add_person(self, name):
+        #loop through tables
+        #if table has free spots
+        #assign seat to person  
+        # return true
+        # else print a message
+        # return false
+        for table in self.tables:
+            if table.has_free_spot():
+                table.assign_seat(name)
+                return True
+        print("We have no more free seats available. consider adding more tables")
+        return False
+    
+    def add_table(self, capacity):
+        #create a new table with capacity
+        #add it to self.tables list
+        #increment by 1 self.number_of_tables
+        #print confirmation message with new total capacity
+        table = Table(capacity)
+        self.tables.append(table)
+        self.number_of_tables += 1
+        print(f"Added table with capacity {capacity}. Total capacity: {self.total_capacity()}")
+    
