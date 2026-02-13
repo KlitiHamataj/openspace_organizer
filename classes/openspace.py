@@ -13,10 +13,19 @@ class Openspace:
         return total    
             
     def organize (self, names):
-        
-        if len(names) > self.total_capacity():  # check for enough seats
-            print(f"Error: Not enough seats! Need {len(names)}, have {self.total_capacity()}")
-            return False 
+        # check if we have more people
+        if len(names) > self.total_capacity():  
+            extra_people = len(names) - self.total_capacity()
+            
+            print(f"We have {extra_people} extra people to add")
+            
+            seats_per_table = self.tables[0].capacity
+            tables_needed = (extra_people + seats_per_table - 1) // seats_per_table # round up nr of tables we need
+            print(f"Adding {tables_needed} more tables")
+            for _ in range(tables_needed):
+                self.add_table(seats_per_table)
+    
+            print(f"New capacity: {self.total_capacity()}")
         
         for name in names:
             available_tables = []
