@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List, Optional
 from classes.openspace import Openspace
+from fastapi.responses import FileResponse
+import pandas as pd
 
 # Create app
 app = FastAPI()
@@ -16,7 +18,7 @@ def read_root():
 # Define data we expect for the initialization
 class InitializeRequest(BaseModel):
     number_of_tables: int
-    seates_per_table: int
+    seats_per_table: int
 
 class OrganizeRequest(BaseModel):
     names: List[str]
@@ -36,7 +38,7 @@ def initialize_openspace(request: InitializeRequest):
     global current_openspace
 
     # create the openspace
-    current_openspace = Openspace(request.number_of_tables, request.seates_per_table)
+    current_openspace = Openspace(request.number_of_tables, request.seats_per_table)
 
     return {
         "status": "succes",
@@ -118,3 +120,34 @@ def add_table(request: AddTableRequest):
         "new_total_tables": current_openspace.number_of_tables,
         "new_total_capacity": current_openspace.total_capacity(),
     }
+
+
+@app.get("/download")
+def download_arrangement():
+    global current_openspace
+    if current_openspace is None:
+        return {"status": "error", "message": "Initialize first"}
+
+    data = {"Table": [], "Name": []}
+    for table_num, table in enumerate(current_openspace.tables, 1):
+        for seat in table.seats:
+            if not seat.free:
+                data["Table"].append(table_num)
+                data["Name"].append(seat.occupant)
+
+    filename = "seating_arrangement.xlsx"
+    df = pd.DataFrame(data)
+    df.to_excel(filename, index=False)
+
+    return FileResponse(
+        filename,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        filename="seating_arrangement.xlsx",
+    )
+
+
+@app.delete("/reset")
+def reset_openspace():
+    global current_openspace
+    current_openspace = None
+    return {"status": "success", "message": "Openspace has been reset"}
