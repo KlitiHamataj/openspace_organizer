@@ -1,3 +1,6 @@
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse
+import os
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List, Optional
@@ -10,8 +13,14 @@ app = FastAPI()
 
 current_openspace: Optional[Openspace] = None
 
-@app.get("/")
-def read_root():
+if os.path.exists("static"):
+    app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.get("/", response_class=HTMLResponse)
+async def read_root():
+    if os.path.exists("static/index.html"):
+        with open("static/index.html", "r") as f:
+            return f.read()
     return {"message": "Openspace Organizer API"}
 
 
