@@ -15,6 +15,11 @@ def read_root():
     return {"message": "Openspace Organizer API"}
 
 
+@app.get("/health")
+def health():
+    return {"status": "healthy"}
+
+
 # Define data we expect for the initialization
 class InitializeRequest(BaseModel):
     number_of_tables: int
